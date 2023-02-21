@@ -348,6 +348,7 @@ public class LongNumber
         while (number1 >= number + number2)
         {
             number = number + number2;
+
             quotient++;
         }
 
@@ -441,7 +442,11 @@ public class LongNumber
 
     private static bool CheckMinus(LongNumber number1, LongNumber number2)
     {
-        if (number1._minus || number2._minus)
+        if (number1._minus && number2._minus)
+        {
+            return false;
+        }
+        if (number1._minus || number2._minus) 
         {
             return true;
         }
