@@ -1,9 +1,12 @@
 ﻿using LongNumbersLibrary;
 
-LongNumber num1 = new LongNumber("12341234");
-LongNumber num2 = new LongNumber("12341234134");
-LongNumber num3 = new LongNumber("123123");
+Console.WriteLine("Введите задачу: ");
+string[] exemple = Console.ReadLine().Split(" ");
 
-LongNumber num4 = num2 / num3;
+LongNumber num1 = new LongNumber($"{exemple[0]}");
+LongNumber num2 = new LongNumber($"{exemple[2]}");
+string sing = exemple[1];
 
-Console.WriteLine(num4);
+LongNumber result = num1.Decision(num2, sing);
+
+Console.WriteLine(result);

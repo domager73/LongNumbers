@@ -5,14 +5,14 @@ namespace LongNumbersLibrary;
 public class LongNumber
 {
     private int[] _digits;
-    private bool minus;
-    private string msg;
+    private bool _minus;
+    private string _msg;
 
     #region CreateObgect
     public LongNumber()
     {
         _digits = new int[] { 0 };
-        minus = false;
+        _minus = false;
     }
 
     public LongNumber(string number)
@@ -21,7 +21,7 @@ public class LongNumber
         {
             _digits = new int[number.Length - 1];
 
-            minus = true;
+            _minus = true;
 
             number = number.Remove(0, 1);
         }
@@ -29,7 +29,7 @@ public class LongNumber
         {
             _digits = new int[number.Length];
 
-            minus = false;
+            _minus = false;
         }
 
         for (int i = 0; i < number.Length; i++)
@@ -46,7 +46,7 @@ public class LongNumber
             _digits[i] = int.Parse(number[i].ToString());
         }
 
-        minus = CheckMinus;
+        _minus = CheckMinus;
     }
 
     public LongNumber(int[] digits, bool CheckMinus, int i)
@@ -54,7 +54,7 @@ public class LongNumber
         _digits = new int[digits.Length];
         Array.Copy(digits, _digits, digits.Length);
 
-        minus = CheckMinus;
+        _minus = CheckMinus;
     }
     #endregion
 
@@ -80,12 +80,16 @@ public class LongNumber
         char[] temp = stringBuilder.ToString().ToCharArray();
         Array.Reverse(temp);
         string strTemp = new string(temp);
-        if (minus)
+        if (_minus)
         {
             strTemp = '-' + strTemp;
         }
+        if (_digits[0] == 0 && _digits.Length == 1) 
+        {
+            strTemp = string.Empty;
+        }
 
-        return msg + strTemp;
+        return _msg + strTemp;
     }
     #endregion
 
@@ -94,13 +98,13 @@ public class LongNumber
     {
         LongNumber resultNumber = new LongNumber();
 
-        resultNumber.msg = CheckMsg(number1, number2);
+        resultNumber._msg = CheckMsg(number1, number2);
 
-        if (number1.minus && number2.minus)
+        if (number1._minus && number2._minus)
         {
-            resultNumber.minus = true;
+            resultNumber._minus = true;
         }
-        else if (number1.minus || number2.minus)
+        else if (number1._minus || number2._minus)
         {
             return number1 - number2;
         }
@@ -171,14 +175,14 @@ public class LongNumber
     {
         LongNumber resultNumber = new LongNumber();
 
-        resultNumber.msg = CheckMsg(number1, number2);
+        resultNumber._msg = CheckMsg(number1, number2);
 
         bool CheckMinus = number1 < number2;
 
-        if (number1.minus && number2.minus)
+        if (number1._minus && number2._minus)
         {
             LongNumber temp = number1 + number2;
-            temp.minus = true;
+            temp._minus = true;
         }
 
         resultNumber._digits = new int[Math.Max(number1._digits.Length, number2._digits.Length)];
@@ -247,37 +251,38 @@ public class LongNumber
     {
         LongNumber resultNumber = new LongNumber();
 
-        resultNumber.msg = CheckMsg(number1, number2);
+        resultNumber._msg = CheckMsg(number1, number2);
 
-        resultNumber.minus = CheckMinus(number1, number2);
+        resultNumber._minus = CheckMinus(number1, number2);
 
-        number1.minus = false;
-        number2.minus = false;
+        number1._minus = false;
+        number2._minus = false;
 
         resultNumber._digits = new int[number1._digits.Length + number2._digits.Length];
 
-        double doubleLenght = 0;
-        for (int i = 0; i < number2._digits.Length; i++)
+        for (int i = 0; i < resultNumber._digits.Length; i++)
         {
-            doubleLenght = Convert.ToDouble(number2._digits[number2._digits.Length - i - 1]) * Math.Pow(10, i) + doubleLenght;
-        }
-
-        int intLenght = Convert.ToInt32(doubleLenght);
-        for (int i = 0; i < intLenght; i++)
-        {
-            resultNumber = resultNumber + number1;
-        }
-
-        for (int i = 0; i < resultNumber._digits.Length - 1; i++)
-        {
-            if (resultNumber._digits[i] > 9)
+            for (int j = 0; j < number2._digits.Length; j++)
             {
-                resultNumber._digits[i + 1] += 1;
+                if (number1._digits.Length > i)
+                {
+                    resultNumber._digits[resultNumber._digits.Length - 1 - i - j] += number1._digits[number1._digits.Length - 1 - i] * 
+                        number2._digits[number2._digits.Length - 1 - j];
+                }
+            }
+        }
+
+
+        for (int i = resultNumber._digits.Length - 1; i >= 0; i--)
+        {
+            while(resultNumber._digits[i] > 9)
+            {
+                resultNumber._digits[i - 1] += 1;
                 resultNumber._digits[i] -= 10;
             }
         }
 
-        if (resultNumber._digits[0] == 0)
+        if(resultNumber._digits[0] == 0)
         {
             int[] cleanDigits = new int[resultNumber._digits.Length - 1];
 
@@ -296,12 +301,12 @@ public class LongNumber
     {
         LongNumber resultNumber = new LongNumber();
 
-        resultNumber.msg = CheckMsg(number1, number2);
+        resultNumber._msg = CheckMsg(number1, number2);
 
-        resultNumber.minus = CheckMinus(number1, number2);
+        resultNumber._minus = CheckMinus(number1, number2);
 
-        number1.minus = false;
-        number2.minus = false;
+        number1._minus = false;
+        number2._minus = false;
 
         if (number2._digits[0] == 1 && number2._digits.Length == 1)
         {
@@ -315,8 +320,8 @@ public class LongNumber
         if (number2 > number1)
         {
             resultNumber._digits = new int[] { 0 };
-            resultNumber.minus = false;
-            resultNumber.msg = "примерно: ";
+            resultNumber._minus = false;
+            resultNumber._msg = "примерно: ";
 
             return resultNumber;
         }
@@ -331,7 +336,7 @@ public class LongNumber
         {
             resultNumber._digits = new int[1] { 0 };
 
-            resultNumber.msg = "на ноль делить нельзя";
+            resultNumber._msg = "на ноль делить нельзя";
 
             return resultNumber;
         }
@@ -348,7 +353,7 @@ public class LongNumber
 
         if (number1 != number)
         {
-            resultNumber.msg = "примерно: ";
+            resultNumber._msg = "примерно: ";
         }
 
         string str = quotient.ToString();
@@ -419,13 +424,13 @@ public class LongNumber
 
     private static string CheckMsg(LongNumber number1, LongNumber number2)
     {
-        if (number1.msg != null)
+        if (number1._msg != null)
         {
-            return number1.msg;
+            return number1._msg;
         }
-        else if (number2.msg != null)
+        else if (number2._msg != null)
         {
-            return number2.msg;
+            return number2._msg;
         }
         else
         {
@@ -436,7 +441,7 @@ public class LongNumber
 
     private static bool CheckMinus(LongNumber number1, LongNumber number2)
     {
-        if (number1.minus || number2.minus)
+        if (number1._minus || number2._minus)
         {
             return true;
         }
@@ -445,5 +450,40 @@ public class LongNumber
             return false;
         }
     }
+    #endregion
+
+    #region Logic
+
+    public LongNumber Decision(LongNumber number2, string sing) 
+    {
+        switch (sing) 
+        {
+            case "+":
+                {
+                    return this + number2;
+                }
+            case "-":
+                {
+                    return this - number2;
+                }
+            case "*":
+                {
+                    return this * number2;
+                }
+            case "/":
+                {
+                    return this / number2;
+                }
+                default: 
+                {
+                    LongNumber number = new LongNumber();
+                    number._msg = "Пример введен неверно";
+
+                    return number;
+                }
+
+        }
+    }
+
     #endregion
 }
